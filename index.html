@@ -9,6 +9,19 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+        form{
+            display: block;
+            max-width:350px;
+            margin:1em auto;
+        }
+        form>input,form>textarea,form>button{
+            display: block;
+            width: 100%;
+            padding: 1em 0;
+            margin-bottom: 1.5em;
+        }
+    </style>
 </head>
 
 <body>
@@ -16,7 +29,8 @@
         <form action="https://api.weixin.qq.com/cgi-bin/token" target="_blank" method="get">
             <input type="text" name="grant_type" value="client_credential" />
             <input type="text" name="appid" value="wx178113d8e30063a2" />
-            <input type="text" name="secret" value="34a5177d446625cb55c440111d0ed9cd" />
+            <textarea name="secret">34a5177d446625cb55c440111d0ed9cd</textarea>
+            <br />
             <button type="submit">submit</button>
         </form>
     </div>
