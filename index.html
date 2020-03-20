@@ -13,7 +13,12 @@
 
 <body>
     <div id="app">
-
+        <form action="https://api.weixin.qq.com/cgi-bin/token" target="_blank" method="get">
+            <input type="text" name="grant_type" value="client_credential" />
+            <input type="text" name="appid" value="wx178113d8e30063a2" />
+            <input type="text" name="secret" value="34a5177d446625cb55c440111d0ed9cd" />
+            <button type="submit">submit</button>
+        </form>
     </div>
 </body>
 
