@@ -22,11 +22,14 @@
                 scroll-behavior: smooth;
                 background-color: #f7f8fa;
             }
+            .app{
+                padding:1em 0;
+            }
         </style>
     </head>
 
     <body>
-        <div id="app">
+        <div id="app" class="app">
             <van-cell v-for="(item,index) in list" :key="index" :title="item.name" :url="item.url" is-link />
         </div>
         <script>

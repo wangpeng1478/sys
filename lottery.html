@@ -17,6 +17,9 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <style>
+            .app{
+                padding:1em 0;
+            }
             html,
             body {
                 margin:0 auto;
@@ -37,34 +40,37 @@
                 color: rgba(0, 0, 0, 0.9);
                 color: var(--weui-FG-0);
             }
-
-            pre,.avatarList {
-                margin: 1em 0;
+            pre{
+                background-color: #191919;
+                color: #fffc;
+            }
+            pre{
+                margin: 1em 0 0 0;
                 padding: 1em;
                 overflow: auto;
                 -webkit-overflow-scrolling: touch;
-                max-height: 40vh;
-            }
-            .avatarList img{
-                width:50px;
-                height:50px;
-                display: inline-block;
-                border:1px solid #eee;
-                margin:5px;
+                max-height: 300px;
             }
             .van-form {
                 margin: 1em 0;
+            }
+            .nodes{
+                width: 100%;
+                height:300px;
+                margin: 2em 0;
+            }
+            .nodes:focus{
+                outline: 2px solid red;
             }
         </style>
     </head>
 
     <body>
-        <div id="app">
-            <!-- <div class="avatarList">
-                <img v-for="(item,index) in avatarList" :key="index" :src="item">
-            </div> -->
+        <div id="app" class="app">
             <van-cell>
-                <h2>select</h2>
+                <h2>
+                    <a @click="add" href="javascript:;">添加抽奖</a>
+                </h2>
             </van-cell>
             <van-cell center is-link>
                 <select class="weui-select" v-model="selectVal" @change="selectValchange">
@@ -74,56 +80,70 @@
                     </option>
                 </select>
             </van-cell>
-            <van-cell center title="pre">
-                <template #right-icon>
-                    <van-switch v-model="preShow" size="24" />
-                </template>
-            </van-cell>
-            <pre v-if="preShow">{{list}}</pre>
+            <pre>{{list}}</pre>
             <template v-for="(item,index) in list">
-                <van-form :key="index" @submit="onSubmit" v-if="index==selectVal">
+                <div style="margin-top:1em" :key="index" v-if="index==selectVal">
                     <van-field v-model="item.id" :disabled="disabledId" right-icon="edit"
                         @click-right-icon="disabledId = !disabledId" label="ID">
                     </van-field>
-                    <van-field v-model="item.fir_val" placeholder="id" type="textarea" label="名字"></van-field>
+                    <van-field v-model="item.fir_val" placeholder="名字" type="textarea" label="名字"></van-field>
                     <van-field v-model="item.fir_num" placeholder="数字或名字" label="数量"></van-field>
                     <van-field v-model="item.uname" placeholder="赞助商(可空)" label="赞助商"></van-field>
                     <van-field v-model="item.apply_num" placeholder="参与人数" label="参与人数" type="digit"></van-field>
                     <van-field v-model="item.minfoName" placeholder="中奖人姓名" label="中奖人姓名"></van-field>
-                    <van-field v-model="item.minfoImg" placeholder="中奖人头像" label="中奖人头像">
+                    <van-field v-model="item.minfoImg" placeholder="中奖人头像" label="中奖人头像" center>
                         <template #button>
-                           <img :src="item.minfoImg" />
+                            <a :href="item.minfoImg" target="_blank">
+                                <img width="50" height="50" :src="item.minfoImg" />
+                            </a>   
                         </template>
                     </van-field>
+                    <van-cell center is-link>
+                        <select class="weui-select" v-model="minfoImg" @change="minfoImgchange">
+                            <option value="-1" selected disabled hidden>请选择中奖人头像</option>
+                            <option v-for="(item,index) in avatarList" :key="index" :value="item">
+                                {{item}}
+                            </option>
+                        </select>
+                    </van-cell>
                     <van-cell title="开奖时间">
                         <van-tag>{{new Date(item.apply_tima).toLocaleString()}}</van-tag>
                     </van-cell>
                     <van-field v-model="apply_tima" type="datetime-local" label="选择开奖时间" right-icon="exchange"
                     @click-right-icon="exchange"></van-field>
-
-
-                    <div style="margin: 16px;">
-                        <van-button round block type="info" native-type="submit">提交</van-button>
-                    </div>
-                </van-form>
+                    <textarea class="nodes" v-model="item.nodes"></textarea>
+                    <!-- <div v-html="item.nodes"></div> -->
+                </div>
             </template>
+            <div v-show="selectVal != -1" style="margin-top:1em;">
+                <!-- <div id="nodes" style="width:100%;"></div> -->
+                <div style="margin: 16px;text-align: center;">
+                    <van-button style="margin:1em" @click="onSubmit" round block type="info">提交</van-button>
+                    <van-button style="margin:1em" @click="remove" round block type="danger">删除</van-button>
+                    <a href="https://console.cloud.tencent.com/scf/list-detail?tab=codeTab&ns=default&rid=4&id=qq_lottery" target="_blank">
+                     腾讯云
+                    </a>
+                </div>
+                <textarea class="nodes" readonly v-if="datajson" v-model="datajson"></textarea>
+            </div>
         </div>
         <script>
+           
             var vue = new Vue({
                 el: '#app',
                 data: {
                     disabledId: true,
-                    preShow: false,
                     selectVal: -1,
+                    datajson:"",
                     apply_tima:"",
+                    minfoImg:"-1",
+                    editor:null,
                     list: [],
                     avatarList: [],
                 },
                 mounted() {
-                    // Math.random().toString(16).substring(2)
-                    // vant.Toast('欢迎');
-                    //form.img.splice(index, 1)
-                    this.getAvatar();
+                    // this.getAvatar();
+                    
                     this.getList();
                 },
                 methods: {
@@ -162,18 +182,52 @@
                         });
                     },
                     selectValchange(){
-                        var index = this.selectVal;
-                        console.log('index',index)
+                        var index = parseInt(this.selectVal);
+                        this.minfoImg = "-1";
+                        this.datajson = "";
+                    },
+                    minfoImgchange(){
+                        var index = parseInt(this.selectVal);
+                        this.list[index].minfoImg = this.minfoImg;
                     },
                     exchange(){
                         var apply_tima = this.apply_tima;
+                        var index = parseInt(this.selectVal);
                         if(apply_tima){
                             vant.Toast(apply_tima);
-                            this.list[this.selectVal].apply_tima = new Date(apply_tima).getTime();
+                            this.list[index].apply_tima = new Date(apply_tima).getTime();
                         }
                     },
+                    add(){
+                        this.datajson = "";
+                        this.list.unshift({
+                            "id": Math.random().toString(16).substring(2),
+                            "imgurl": "https://cdn.bbyer.com/tmp_3a06ef425acc1cd6d6a03b530e8f851f.png",
+                            "uname": "赞助商",
+                            "fir_val": "iPhone",
+                            "apply_tima": 1585047180000,
+                            "fir_num": "1部",
+                            "apply_num": 299,
+                            "minfoName": "李先生",
+                            "minfoImg": "https://note.youdao.com/yws/api/image/normal/1544020954436?userId=weixinobU7VjpF2ua3c_nc4kqu6EWCtRHk",
+                            "nodes": "<p>😀<br></p>"
+                        })
+                    },
+                    remove(){
+                        this.datajson = "";
+                        var index = parseInt(this.selectVal);
+                        vant.Dialog.confirm({
+                            title: '提示',
+                            message: `确定删除【${this.list[index].fir_val}】`
+                        }).then(() => {
+                            this.list.splice(index, 1);
+                        }).catch(() => {
+                            // on cancel
+                        });
+                    },
                     onSubmit() {
-
+                        const data = this.list;
+                        this.datajson = JSON.stringify(data);
                     },
                 }
             })
