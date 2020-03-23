@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+    <head>
+        <meta charset="utf-8">
+        <title>lottery</title>
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+        <link rel="shortcut icon" href="" type="image/x-icon" />
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.5/lib/index.css">
+        <link href="https://cdn.bootcss.com/wangEditor/10.0.13/wangEditor.min.css" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.js"></script>
+        <script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script>
+        <script src="https://cdn.bootcss.com/wangEditor/10.0.13/wangEditor.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vant@2.5/lib/vant.min.js"></script>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <style>
+            html,
+            body {
+                margin:0 auto;
+                max-width:500px;
+                scroll-behavior: smooth;
+                background-color: #f7f8fa;
+            }
+
+            .weui-select {
+                -webkit-appearance: none;
+                border: 0;
+                outline: 0;
+                background-color: transparent;
+                width: 100%;
+                font-size: inherit;
+                position: relative;
+                z-index: 1;
+                color: rgba(0, 0, 0, 0.9);
+                color: var(--weui-FG-0);
+            }
+
+            pre,.avatarList {
+                margin: 1em 0;
+                padding: 1em;
+                overflow: auto;
+                -webkit-overflow-scrolling: touch;
+                max-height: 40vh;
+            }
+            .avatarList img{
+                width:50px;
+                height:50px;
+                display: inline-block;
+                border:1px solid #eee;
+                margin:5px;
+            }
+            .van-form {
+                margin: 1em 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app">
+            <!-- <div class="avatarList">
+                <img v-for="(item,index) in avatarList" :key="index" :src="item">
+            </div> -->
+            <van-cell>
+                <h2>select</h2>
+            </van-cell>
+            <van-cell center is-link>
+                <select class="weui-select" v-model="selectVal" @change="selectValchange">
+                    <option value="-1" selected disabled hidden>请选择</option>
+                    <option v-for="(item,index) in list" :key="index" :value="index">
+                        【{{index}}】{{item.fir_val}}
+                    </option>
+                </select>
+            </van-cell>
+            <van-cell center title="pre">
+                <template #right-icon>
+                    <van-switch v-model="preShow" size="24" />
+                </template>
+            </van-cell>
+            <pre v-if="preShow">{{list}}</pre>
+            <template v-for="(item,index) in list">
+                <van-form :key="index" @submit="onSubmit" v-if="index==selectVal">
+                    <van-field v-model="item.id" :disabled="disabledId" right-icon="edit"
+                        @click-right-icon="disabledId = !disabledId" label="ID">
+                    </van-field>
+                    <van-field v-model="item.fir_val" placeholder="id" type="textarea" label="名字"></van-field>
+                    <van-field v-model="item.fir_num" placeholder="数字或名字" label="数量"></van-field>
+                    <van-field v-model="item.uname" placeholder="赞助商(可空)" label="赞助商"></van-field>
+                    <van-field v-model="item.apply_num" placeholder="参与人数" label="参与人数" type="digit"></van-field>
+                    <van-field v-model="item.minfoName" placeholder="中奖人姓名" label="中奖人姓名"></van-field>
+                    <van-field v-model="item.minfoImg" placeholder="中奖人头像" label="中奖人头像">
+                        <template #button>
+                           <img :src="item.minfoImg" />
+                        </template>
+                    </van-field>
+                    <van-cell title="开奖时间">
+                        <van-tag>{{new Date(item.apply_tima).toLocaleString()}}</van-tag>
+                    </van-cell>
+                    <van-field v-model="apply_tima" type="datetime-local" label="选择开奖时间" right-icon="exchange"
+                    @click-right-icon="exchange"></van-field>
+
+
+                    <div style="margin: 16px;">
+                        <van-button round block type="info" native-type="submit">提交</van-button>
+                    </div>
+                </van-form>
+            </template>
+        </div>
+        <script>
+            var vue = new Vue({
+                el: '#app',
+                data: {
+                    disabledId: true,
+                    preShow: false,
+                    selectVal: -1,
+                    apply_tima:"",
+                    list: [],
+                    avatarList: [],
+                },
+                mounted() {
+                    // Math.random().toString(16).substring(2)
+                    // vant.Toast('欢迎');
+                    //form.img.splice(index, 1)
+                    this.getAvatar();
+                    this.getList();
+                },
+                methods: {
+                    getAvatar(){
+                        var vm = this;
+                        vant.Toast.loading({
+                            duration: 0,
+                            forbidClick: true,
+                            message: 'loading'
+                        });
+                        $.get("https://service-jb0727c9-1254176432.sh.apigw.tencentcs.com/release/qq_lottery", { type: "avatar" }, function (res) {
+                            vant.Toast.clear();
+                            if (res.code == 0) {
+                                vm.avatarList = res.data
+                            } else {
+                                vant.Toast(res.msg);
+                            }
+
+                        });
+                    },
+                    getList() {
+                        var vm = this;
+                        vant.Toast.loading({
+                            duration: 0,
+                            forbidClick: true,
+                            message: 'loading'
+                        });
+                        $.get("https://service-jb0727c9-1254176432.sh.apigw.tencentcs.com/release/qq_lottery", { type: "lottery" }, function (res) {
+                            vant.Toast.clear();
+                            if (res.code == 0) {
+                                vm.list = res.data
+                            } else {
+                                vant.Toast(res.msg);
+                            }
+
+                        });
+                    },
+                    selectValchange(){
+                        var index = this.selectVal;
+                        console.log('index',index)
+                    },
+                    exchange(){
+                        var apply_tima = this.apply_tima;
+                        if(apply_tima){
+                            vant.Toast(apply_tima);
+                            this.list[this.selectVal].apply_tima = new Date(apply_tima).getTime();
+                        }
+                    },
+                    onSubmit() {
+
+                    },
+                }
+            })
+
+        </script>
+    </body>
+
+</html>
