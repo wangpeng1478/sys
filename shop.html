@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+    <head>
+        <meta charset="utf-8">
+        <title>lottery</title>
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+        <link rel="shortcut icon" href="" type="image/x-icon" />
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.5/lib/index.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.js"></script>
+        <script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vant@2.5/lib/vant.min.js"></script>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <style>
+            .app{
+                padding:1em 0;
+            }
+            img{
+                object-fit: contain;
+                object-position: center;
+            }
+            html,
+            body {
+                margin:0 auto;
+                max-width:500px;
+                scroll-behavior: smooth;
+                background-color: #f7f8fa;
+            }
+
+            .weui-select {
+                -webkit-appearance: none;
+                border: 0;
+                outline: 0;
+                background-color: transparent;
+                width: 100%;
+                font-size: inherit;
+                position: relative;
+                z-index: 1;
+                color: rgba(0, 0, 0, 0.9);
+            }
+            pre{
+                background-color: #191919;
+                color: #fffc;
+            }
+            pre{
+                margin: 1em 0 0 0;
+                padding: 1em;
+                overflow: auto;
+                -webkit-overflow-scrolling: touch;
+                max-height: 300px;
+            }
+            .van-form {
+                margin: 1em 0;
+            }
+            .nodes{
+                width: 100%;
+                height:300px;
+                margin: 2em 0;
+                overflow: auto;
+            }
+            .nodes:focus{
+                outline: 2px solid red;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app" class="app">
+            <van-cell>
+                <h2>
+                    <a @click="add" href="javascript:;">PUSH</a>
+                </h2>
+            </van-cell>
+            <van-cell center is-link>
+                <select class="weui-select" v-model="selectVal" @change="selectValchange">
+                    <option value="-1" selected disabled hidden>请选择</option>
+                    <option v-for="(item,index) in list" :key="index" :value="index">
+                        【{{index}}】{{item.name}}
+                    </option>
+                </select>
+            </van-cell>
+            <pre>{{list}}</pre>
+            <template v-for="(item,index) in list">
+                <div style="margin-top:1em" :key="index" v-if="index==selectVal">
+                    <van-field v-model="item.id" :disabled="disabledId" right-icon="edit"
+                        @click-right-icon="disabledId = !disabledId" label="ID">
+                    </van-field>
+                    <van-field v-model="item.name" placeholder="名字" type="textarea" label="名字"></van-field>
+                    <van-field v-model="item.img" label="封面" center>
+                        <template #button>
+                            <a :href="item.img" target="_blank">
+                                <img width="50" height="50" :src="item.img" />
+                            </a>   
+                        </template>
+                    </van-field>
+                    <van-field v-model="item.price" label="彩币(价格)" type="digit"></van-field>
+                    <van-field v-model="item.money" label="价值" type="digit"></van-field>
+                    <van-field v-model="item.count" label="库存" type="digit"></van-field>
+                    <textarea class="nodes" v-model="item.nodes"></textarea>
+                    <div class="nodes" v-html="item.nodes"></div>
+                </div>
+            </template>
+            <div v-show="selectVal != -1" style="margin-top:1em;">
+                <!-- <div id="nodes" style="width:100%;"></div> -->
+                <div style="margin: 16px;text-align: center;">
+                    <van-button style="margin:1em" @click="onSubmit" round block type="info">提交</van-button>
+                    <van-button style="margin:1em" @click="remove" round block type="danger">删除</van-button>
+                    <a href="https://console.cloud.tencent.com/scf/list-detail?tab=codeTab&ns=default&rid=4&id=qq_lottery" target="_blank">
+                     腾讯云
+                    </a>
+                    <br />
+                    <a href="https://www.135editor.com/" target="_blank">
+                      135editor
+                    </a>
+                    <br />
+                    <a href="http://shopping.ceair.com/" target="_blank">
+                      积分
+                    </a>
+                </div>
+                <textarea class="nodes" readonly v-if="datajson" v-model="datajson"></textarea>
+            </div>
+        </div>
+        <script>
+            var vue = new Vue({
+                el: '#app',
+                data: {
+                    disabledId: true,
+                    selectVal: -1,
+                    datajson:"",
+                    apply_tima:"",
+                    minfoImg:"-1",
+                    editor:null,
+                    list: [],
+                    avatarList: [],
+                },
+                mounted() {
+                    this.getList();
+                },
+                methods: {
+                    getList() {
+                        var vm = this;
+                        vant.Toast.loading({
+                            duration: 0,
+                            forbidClick: true,
+                            message: 'loading'
+                        });
+                        $.get("https://service-jb0727c9-1254176432.sh.apigw.tencentcs.com/release/qq_lottery", { type: "shop" }, function (res) {
+                            vant.Toast.clear();
+                            if (res.code == 0) {
+                                vm.list = res.data
+                            } else {
+                                vant.Toast(res.msg);
+                            }
+
+                        });
+                    },
+                    selectValchange(){
+                        var index = parseInt(this.selectVal);
+                        this.minfoImg = "-1";
+                        this.datajson = "";
+                    },
+                   
+                    exchange(){
+                        var apply_tima = this.apply_tima;
+                        var index = parseInt(this.selectVal);
+                        if(apply_tima){
+                            vant.Toast(apply_tima);
+                            this.list[index].apply_tima = new Date(apply_tima).getTime();
+                        }
+                    },
+                    add(){
+                        this.datajson = "";
+                        this.list.unshift({
+                            "id": Math.random().toString(16).substring(2),
+                            "name":"新增"
+                        })
+                    },
+                    remove(){
+                        this.datajson = "";
+                        var index = parseInt(this.selectVal);
+                        vant.Dialog.confirm({
+                            title: '提示',
+                            message: `确定删除【${this.list[index].name}】`
+                        }).then(() => {
+                            this.list.splice(index, 1);
+                        }).catch(() => {
+                            // on cancel
+                        });
+                    },
+                    onSubmit() {
+                        const data = this.list;
+                        let datajson = JSON.stringify(data);
+                        this.datajson = datajson.replace(/section/g,"div");
+                    },
+                }
+            })
+
+        </script>
+    </body>
+
+</html>

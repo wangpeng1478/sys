@@ -28,11 +28,15 @@
             }
 
             .getAvatar {
-                height: 300px;
+                height: 500px;
                 overflow: auto;
             }
-
-            pre {
+            img {
+                margin:3px;
+            }
+            textarea {
+                width:100%;
+                height:300px;
                 background-color: #191919;
                 color: #fffc;
                 margin: 1em 0 0 0;
@@ -41,24 +45,18 @@
                 -webkit-overflow-scrolling: touch;
                 max-height: 300px;
             }
+            textarea:focus{
+                outline: 2px solid red;
+            }
         </style>
     </head>
 
     <body>
         <div id="app" class="app">
-            <img src="https://c-ssl.duitang.com/uploads/item/202003/19/20200319121448_RrsR2.jpeg">
             <div class="getAvatar">
-                <van-cell v-for="(item,index) in sender" :key="index" :title="item.username" center>
-                    <template #icon>
-                        <img :src="item.avatar" width="30" height="30">
-                    </template>
-                </van-cell>
-                <van-button @click="getduitang" type="primary" size="mini">get</van-button>
+                <img @click="list.splice(index, 1)" v-for="(item,index) in list" :key="index" :src="item" width="40" height="40" />
             </div>
-            <pre>{{sender}}</pre>
-            <div style="margin: 16px;text-align: center;">
-                <van-button style="margin:1em" @click="onSubmit" round block type="info">提交</van-button>
-            </div>
+            <textarea class="nodes" readonly v-model="JSON.stringify(list)"></textarea>
         </div>
         <script>
             // https://www.duitang.com/category/?cat=avatar#!hot-p6
@@ -73,7 +71,7 @@
                 mounted() {
                     vant.Toast('欢迎');
                     // this.getduitang();
-                    // this.getAvatar();
+                    this.getAvatar();
                 },
                 methods: {
                     getduitang(start) {
