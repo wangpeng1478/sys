@@ -219,15 +219,15 @@
                         this.datajson = "";
                         this.list.unshift({
                             "id": Math.random().toString(16).substring(2),
-                            "imgurl": "https://cdn.bbyer.com/tmp_3a06ef425acc1cd6d6a03b530e8f851f.png",
+                            "imgurl": "",
                             "uname": "赞助商",
-                            "fir_val": "iPhone",
-                            "apply_tima": 1585047180000,
+                            "fir_val": "名字",
+                            "apply_tima": new Date().getTime(),
                             "fir_num": "1部",
                             "apply_num": 299,
-                            "minfoName": "李先生",
-                            "minfoImg": "https://note.youdao.com/yws/api/image/normal/1544020954436?userId=weixinobU7VjpF2ua3c_nc4kqu6EWCtRHk",
-                            "nodes": "<p>😀<br></p>"
+                            "minfoName": "李xxxx",
+                            "minfoImg": "",
+                            "nodes": ``
                         })
                     },
                     remove(){
@@ -245,7 +245,7 @@
                     onSubmit() {
                         const data = this.list;
                         let datajson = JSON.stringify(data);
-                        this.datajson = datajson.replace(/section/g,"div");
+                        this.datajson = datajson.replace(/div/g,"div");
                     },
                 }
             })
