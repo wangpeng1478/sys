@@ -97,6 +97,7 @@
                         </template>
                     </van-field>
 
+                    <van-field v-model="item.blockquote" type="textarea" placeholder="blockquote" label="说明"></van-field>
                     <van-field v-model="item.fir_num" placeholder="数字或名字" label="数量"></van-field>
                     <van-field v-model="item.uname" placeholder="赞助商(可空)" label="赞助商"></van-field>
                     <van-field v-model="item.apply_num" placeholder="参与人数" label="参与人数" type="digit"></van-field>
@@ -222,6 +223,7 @@
                             "imgurl": "",
                             "uname": "赞助商",
                             "fir_val": "名字",
+                            "blockquote":"说明文字",
                             "apply_tima": new Date().getTime(),
                             "fir_num": "1部",
                             "apply_num": 299,
