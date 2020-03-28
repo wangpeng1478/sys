@@ -88,6 +88,11 @@
                     <van-field v-model="item.id" :disabled="disabledId" right-icon="edit"
                         @click-right-icon="disabledId = !disabledId" label="ID">
                     </van-field>
+                    <van-cell center title="是否广告参与">
+                        <template #right-icon>
+                            <van-switch v-model="item.isAd" size="24" />
+                        </template>
+                    </van-cell>
                     <van-field v-model="item.fir_val" placeholder="名字" type="textarea" label="名字"></van-field>
                     <van-field v-model="item.imgurl" placeholder="商品图片" label="商品图片" center>
                         <template #button>
@@ -220,6 +225,7 @@
                         this.datajson = "";
                         this.list.unshift({
                             "id": Math.random().toString(16).substring(2),
+                            "isAd":false,
                             "imgurl": "",
                             "uname": "赞助商",
                             "fir_val": "名字",
