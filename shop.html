@@ -88,6 +88,8 @@
                     <van-field v-model="item.id" :disabled="disabledId" right-icon="edit"
                         @click-right-icon="disabledId = !disabledId" label="ID">
                     </van-field>
+                    <van-field v-model="item.sort" type="digit" label="sort" />
+                    </van-field>
                     <van-field v-model="item.name" placeholder="名字" type="textarea" label="名字"></van-field>
                     <van-field v-model="item.img" label="封面" center>
                         <template #button>
@@ -176,47 +178,8 @@
                         this.list.unshift({
                             "id": Math.random().toString(16).substring(2),
                             "name":"新增",
-                            "nodes":`<div class="_135editor" data-id="97486">
-    <div style="margin:20px auto 10px;">
-        <div class="assistant" style="width:35px;margin:0px auto;transform: rotate(0deg);-webkit-transform: rotate(0deg);-moz-transform: rotate(0deg);-o-transform: rotate(0deg);">
-            <div class="assistant" style="width:35px;">
-                <img class="assistant" style="width:100%; display:block;" src="http://image2.135editor.com/cache/remote/aHR0cHM6Ly9tbWJpei5xbG9nby5jbi9tbWJpel9wbmcvN1FSVHZrSzJxQzZyWlZqVnlyRExQbzBZUzVHOURRc3FFeFBzeE5zaDhCbVpia3pTRFFGWk5CRG10RmphS2o2TGZaSXdiSXQ1b2VGNVJRUEJKRVRxYWcvMD93eF9mbXQ9cG5n" data-ratio="0.7380952380952381" data-w="42" data-width="100%"/>
-            </div>
-        </div>
-        <div style="background-color:#fffbf1;padding:0em 0.5em 1em;color:#e94c34;border:2px solid #f2b4a1;box-sizing: border-box;margin-top:-15px;">
-            <div style="margin-left:-10px;">
-                <div style="display:flex;justify-content: flex-start;align-items:flex-start;margin-top:2em;">
-                    <div style="width:50px;margin-top:-9px;">
-                        <div style="padding:10px;background:url(http://image2.135editor.com/cache/remote/aHR0cHM6Ly9tbWJpei5xbG9nby5jbi9tbWJpel9wbmcvN1FSVHZrSzJxQzZyWlZqVnlyRExQbzBZUzVHOURRc3FLR2NvNlptMWFhNURnSHJVWkViWVN4R3h4ak5hWnFPcUhhdVlIeHllTUppYnFxTldxaWJ6dE85QS8wP3d4X2ZtdD1wbmc=)no-repeat;background-size:35px;background-position:center ;">
-                            <div style="text-align: center;color: #fff;font-size: 18px;margin-top:-2px;">
-                                <br/>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="flex:1;margin-left:5px;">
-                        <div class="135brush" data-brushtype="text" style="text-align:left;font-size:16px;font-weight:bold;color:#e94c34;">
-                            兑换说明
-                        </div>
-                        <div class="135brush" data-brushtype="text" style="text-align:justify;font-size:14px;color:#e94c34;margin-top:12px;letter-spacing:1.5px;line-height:1.75em;">
-                            <p>
-                                1、没人现兑1个 兑完为止。
-                            </p>
-                            <p>
-                                2、请兑换后填写正确的收货地址，保持电话畅通。
-                            </p>
-                            <p>
-                                3、实物奖品将于15个工作日内发货。
-                            </p>
-                            <p>
-                                4、邮费有平台承担
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`
+                            "sort":0,
+                            "nodes":``
                         })
                     },
                     remove(){
