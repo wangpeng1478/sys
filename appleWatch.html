@@ -67,7 +67,7 @@
 
     <body>
         <div id="app" class="app">
-            <van-panel @click="getInfo(index)" v-for="(item,index) in list" :key="index" :title="`【${index+1}】${item.title}`"
+            <van-panel v-for="(item,index) in list" :key="index" :title="`【${index+1}】${item.title}`"
                 :desc="`${new Date(item.createdAt).toLocaleString()}`" :status="`${item.single_download}次数`">
                 <div class="watch">
                     <div class="navview">
@@ -155,27 +155,6 @@
                                     alert('null')
                                 }
 
-                            }
-                        });
-                    },
-                    getInfo(skip) {
-                        $.ajax({
-                            type: "get",
-                            url: "https://api.pengranapp.com/1.1/classes/Album",
-                            headers: {
-                                "X-LC-Id": "NECACk3YmXdaG9BIfSEtiXzB-gzGzoHsz",
-                                "X-LC-Sign": `4f0877fabcc47972d04a7f0a0b89be81,1585617268180`
-                            },
-                            data: {
-                                className: 'Album',
-                                skip,
-                                limit:1,
-                                order: '-recommended,-createdAt',
-                                where: '{"type":{"$ne":1}}'
-                            },
-                            dataType: "json",
-                            success: function (res) {
-                                vant.Toast.clear();
                             }
                         });
                     },
