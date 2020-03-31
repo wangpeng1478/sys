@@ -67,11 +67,11 @@
 
     <body>
         <div id="app" class="app">
-            <van-panel v-for="(item,index) in list" :key="index" :title="`【${index+1}】${item.title}`"
+            <van-panel @click="getInfo(index)" v-for="(item,index) in list" :key="index" :title="`【${index+1}】${item.title}`"
                 :desc="`${new Date(item.createdAt).toLocaleString()}`" :status="`${item.single_download}次数`">
                 <div class="watch">
                     <div class="navview">
-                        <ul @click="getInfo(item.objectId)">
+                        <ul>
                             <li v-for="(photos,j) in item.photos" :key="'j'+j">
                                 <img :src="photos" />
                             </li>
@@ -86,7 +86,9 @@
         </div>
         <script>
 
-
+            //-todayFree,-priority   //默认
+            //-recommended,-createdAt //创建时间
+            //-recommended,-just_download //下载量
 
             // header
             // X-LC-Id: NECACk3YmXdaG9BIfSEtiXzB-gzGzoHsz
@@ -136,7 +138,7 @@
                                 className: 'Album',
                                 skip,
                                 limit,
-                                order: '-recommended,-createdAt', //recommended:推荐  createdAt:创建时间  just_download:使用人数
+                                order: '-recommended,-just_download',
                                 where: '{"type":{"$ne":1}}'
                             },
                             dataType: "json",
@@ -156,7 +158,7 @@
                             }
                         });
                     },
-                    getInfo(objectId) {
+                    getInfo(skip) {
                         $.ajax({
                             type: "get",
                             url: "https://api.pengranapp.com/1.1/classes/Album",
@@ -166,7 +168,10 @@
                             },
                             data: {
                                 className: 'Album',
-                                objectId
+                                skip,
+                                limit:1,
+                                order: '-recommended,-createdAt',
+                                where: '{"type":{"$ne":1}}'
                             },
                             dataType: "json",
                             success: function (res) {
