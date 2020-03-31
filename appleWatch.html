@@ -42,15 +42,25 @@
                 padding: 1em;
                 list-style: none;
                 display: flex;
+                position: relative;
             }
 
             .navview ul li {
                 margin-right: 1em;
+                position: relative;
+                text-align: center;
+            }
+
+            .navview ul li img {
+                width: 120px;
             }
 
             .but {
                 text-align: center;
                 padding: 1em 0;
+            }
+            .watch{
+                position: relative;
             }
         </style>
     </head>
@@ -59,12 +69,14 @@
         <div id="app" class="app">
             <van-panel v-for="(item,index) in list" :key="index" :title="`【${index+1}】${item.title}`"
                 :desc="`${new Date(item.createdAt).toLocaleString()}`" :status="`${item.single_download}次数`">
-                <div class="navview">
-                    <ul @click="getInfo(item.objectId)">
-                        <li v-for="(photos,j) in item.photos" :key="'j'+j">
-                            <img :src="photos" width="100" height="126" />
-                        </li>
-                    </ul>
+                <div class="watch">
+                    <div class="navview">
+                        <ul @click="getInfo(item.objectId)">
+                            <li v-for="(photos,j) in item.photos" :key="'j'+j">
+                                <img :src="photos" />
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </van-panel>
             <div class="but">
@@ -79,10 +91,10 @@
             // header
             // X-LC-Id: NECACk3YmXdaG9BIfSEtiXzB-gzGzoHsz
             // X-LC-Sign: 4f0877fabcc47972d04a7f0a0b89be81,1585617268180
-            
+
             //搜索
             //https://api.pengranapp.com/1.1/classes/Album?className=Album&order=-just_download&where={"keywords":{"$regex":""}}
-            
+
             // 列表
             //https://api.pengranapp.com/1.1/classes/Album?className=Album&limit=10000&order=-recommended,-createdAt&skip=0&where={"type":{"$ne":1}}
             var vue = new Vue({
