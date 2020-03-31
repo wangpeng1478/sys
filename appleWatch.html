@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+    <head>
+        <meta charset="utf-8">
+        <title>appleWatch</title>
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+        <link rel="shortcut icon" href="" type="image/x-icon" />
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.5/lib/index.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.js"></script>
+        <script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vant@2.5/lib/vant.min.js"></script>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <style>
+            html,
+            body {
+                margin: 0 auto;
+                max-width: 500px;
+                scroll-behavior: smooth;
+                background-color: #f7f8fa;
+            }
+
+            .app {
+                padding: 1em 0;
+            }
+
+            .van-panel {
+                margin-bottom: 1em;
+            }
+
+            .navview {
+                width: 100%;
+                overflow-x: scroll;
+                position: relative;
+
+            }
+
+            .navview ul {
+                padding: 1em;
+                list-style: none;
+                display: flex;
+            }
+
+            .navview ul li {
+                margin-right: 1em;
+            }
+
+            .but {
+                text-align: center;
+                padding: 1em 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app" class="app">
+            <van-panel v-for="(item,index) in list" :key="index" :title="`【${index+1}】${item.title}`"
+                :desc="`${new Date(item.createdAt).toLocaleString()}`" :status="`${item.single_download}次数`">
+                <div class="navview">
+                    <ul @click="getInfo(item.objectId)">
+                        <li v-for="(photos,j) in item.photos" :key="'j'+j">
+                            <img :src="photos" width="100" height="126" />
+                        </li>
+                    </ul>
+                </div>
+            </van-panel>
+            <div class="but">
+                <van-button @click="getList" plain type="primary">Next</van-button>
+                <van-button @click="Reset" plain type="primary">Reset</van-button>
+            </div>
+        </div>
+        <script>
+
+
+
+            // header
+            // X-LC-Id: NECACk3YmXdaG9BIfSEtiXzB-gzGzoHsz
+            // X-LC-Sign: 4f0877fabcc47972d04a7f0a0b89be81,1585617268180
+            
+            //搜索
+            //https://api.pengranapp.com/1.1/classes/Album?className=Album&order=-just_download&where={"keywords":{"$regex":""}}
+            
+            // 列表
+            //https://api.pengranapp.com/1.1/classes/Album?className=Album&limit=10000&order=-recommended,-createdAt&skip=0&where={"type":{"$ne":1}}
+            var vue = new Vue({
+                el: '#app',
+                data: {
+                    pages: 0,
+                    skip: 0,
+                    list: []
+                },
+                mounted() {
+
+                },
+                methods: {
+                    Reset() {
+                        this.skip = 0;
+                        this.list = [];
+                        this.getList();
+                    },
+                    getList() {
+                        vant.Toast.loading({
+                            duration: 0,
+                            overlay: true,
+                            forbidClick: true,
+                            message: 'loading'
+                        });
+                        var vm = this;
+                        var skip = vm.skip || 0;
+                        var limit = 5;
+                        vm.skip = skip == "0" ? skip + 6 : skip + 5;
+                        console.log(`${limit}-${skip}`);
+                        $.ajax({
+                            type: "get",
+                            url: "https://api.pengranapp.com/1.1/classes/Album",
+                            headers: {
+                                "X-LC-Id": "NECACk3YmXdaG9BIfSEtiXzB-gzGzoHsz",
+                                "X-LC-Sign": `4f0877fabcc47972d04a7f0a0b89be81,1585617268180`
+                            },
+                            data: {
+                                className: 'Album',
+                                skip,
+                                limit,
+                                order: '-recommended,-createdAt', //recommended:推荐  createdAt:创建时间  just_download:使用人数
+                                where: '{"type":{"$ne":1}}'
+                            },
+                            dataType: "json",
+                            success: function (res) {
+                                vant.Toast.clear();
+                                if (res.results.length > 0) {
+                                    let arr = vm.list || [];
+                                    let resArr = res.results;
+                                    resArr.forEach(e => {
+                                        arr.push(e)
+                                    })
+                                    vm.list = arr;
+                                } else {
+                                    alert('null')
+                                }
+
+                            }
+                        });
+                    },
+                    getInfo(objectId) {
+                        $.ajax({
+                            type: "get",
+                            url: "https://api.pengranapp.com/1.1/classes/Album",
+                            headers: {
+                                "X-LC-Id": "NECACk3YmXdaG9BIfSEtiXzB-gzGzoHsz",
+                                "X-LC-Sign": `4f0877fabcc47972d04a7f0a0b89be81,1585617268180`
+                            },
+                            data: {
+                                className: 'Album',
+                                objectId
+                            },
+                            dataType: "json",
+                            success: function (res) {
+                                vant.Toast.clear();
+                            }
+                        });
+                    },
+                }
+            })
+        </script>
+    </body>
+
+</html>
