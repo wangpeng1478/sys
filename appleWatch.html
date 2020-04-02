@@ -67,7 +67,7 @@
 
     <body>
         <div id="app" class="app">
-            <van-panel v-for="(item,index) in list" :key="index" :title="`【${index+1}】${item.title}`"
+            <van-panel @click="getInfo(item.keywords)" v-for="(item,index) in list" :key="index" :title="`【${index+1}】${item.title}`"
                 :desc="`${new Date(item.createdAt).toLocaleString()}`" :status="`${item.single_download}次数`">
                 <div class="watch">
                     <div class="navview">
@@ -99,6 +99,9 @@
 
             // 列表
             //https://api.pengranapp.com/1.1/classes/Album?className=Album&limit=10000&order=-recommended,-createdAt&skip=0&where={"type":{"$ne":1}}
+
+            //热门搜索
+            //https://api.pengranapp.com/1.1/classes/TrendingZh?className=TrendingZh&order=-clickTimes
             var vue = new Vue({
                 el: '#app',
                 data: {
@@ -144,6 +147,7 @@
                             dataType: "json",
                             success: function (res) {
                                 vant.Toast.clear();
+                                console.log('[res.results]',res.results)
                                 if (res.results.length > 0) {
                                     let arr = vm.list || [];
                                     let resArr = res.results;
@@ -151,6 +155,32 @@
                                         arr.push(e)
                                     })
                                     vm.list = arr;
+                                } else {
+                                    alert('null')
+                                }
+
+                            }
+                        });
+                    },
+                    getInfo(keywords){
+                        $.ajax({
+                            type: "get",
+                            url: "https://api.pengranapp.com/1.1/classes/Album",
+                            headers: {
+                                "X-LC-Id": "NECACk3YmXdaG9BIfSEtiXzB-gzGzoHsz",
+                                "X-LC-Sign": `4f0877fabcc47972d04a7f0a0b89be81,1585617268180`
+                            },
+                            data: {
+                                className: 'Album',
+                                order: '-just_download',
+                                where: `{"keywords":{"$regex":"${keywords}"}}`
+                            },
+                            dataType: "json",
+                            success: function (res) {
+                                vant.Toast.clear();
+                                console.log('[res.results]',res.results)
+                                if (res.results.length > 0) {
+                                    
                                 } else {
                                     alert('null')
                                 }
