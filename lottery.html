@@ -88,7 +88,7 @@
                     <van-field v-model="item.id" :disabled="disabledId" right-icon="edit"
                         @click-right-icon="disabledId = !disabledId" label="ID">
                     </van-field>
-                    <van-field v-model="item.sort" type="digit" label="sort" />
+                    <van-field v-model="item.sort" type="digit" label="sort"></van-field>
                     <van-cell center title="是否广告参与">
                         <template #right-icon>
                             <van-switch v-model="item.isAd" size="24" />
