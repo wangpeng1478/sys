@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+    <head>
+        <meta charset="utf-8">
+        <title>kinds</title>
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+        <link rel="shortcut icon" href="" type="image/x-icon" />
+        <meta name="format-detection" content="telephone=no">
+        <script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.js"></script>
+        <script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script>
+        <script src="kinds.js"></script>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <style>
+            .app {
+                padding: 1em 0;
+                width: 500px;
+                margin: 2em auto;
+                line-height: 2;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app" class="app">
+
+
+            <details v-for="(item1,level1) in kinds" :key="level1">
+                <summary :title="item1.code">{{level1+1}}，{{item1.name}}</summary>
+                <details style="margin-left: 1em;" v-for="(item2,level2) in item1.child" :key="level2">
+                    <summary :title="item2.code">{{level2+1}}，{{item2.name}}</summary>
+                    <summary style="margin-left: 2em;" v-for="(item3,level3) in item2.child" :key="level3" :title="item3.code">{{level3+1}}，{{item3.name}}</summary>
+                </details>
+            </details>
+
+        </div>
+        <script>
+            var vue = new Vue({
+                el: '#app',
+                data: {
+                    kinds: kinds,
+                },
+                mounted() {
+
+                },
+                methods: {
+
+                }
+            })
+            // --------------------------------------------------
+        </script>
+    </body>
+
+</html>

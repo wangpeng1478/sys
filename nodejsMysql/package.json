@@ -1,5 +1,5 @@
 {
-  "name": "token",
+  "name": "nodejsmysql",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "wx-server-sdk": "~1.8.2",
-    "request": "latest"
+    "express": "^4.17.1",
+    "node-mysql-promise": "^0.0.7",
+    "request": "^2.88.2"
   }
 }

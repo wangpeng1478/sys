@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+    <head>
+        <meta charset="utf-8">
+        <title>admin</title>
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+        <link rel="shortcut icon" href="" type="image/x-icon" />
+        <meta name="format-detection" content="telephone=no">
+        <script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.js"></script>
+        <script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <style>
+            .app {
+                padding: 1em 0;
+                width: 500px;
+                margin: 2em auto;
+            }
+
+            form {
+                margin-bottom: 2em;
+            }
+
+            table {
+                width: 100%;
+            }
+
+            table,
+            th,
+            td {
+                border: 1px solid grey;
+                border-collapse: collapse;
+                padding: 5px;
+                vertical-align: top;
+            }
+
+            table tr:nth-child(odd) {
+                background-color: #f1f1f1;
+            }
+
+            table tr:nth-child(even) {
+                background-color: #ffffff;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app" class="app">
+            <form @submit.prevent="onSubmit" action="/setDb" method="get" id="form">
+                <input type="text" v-model="form.name" name="name" placeholder="name" required />
+                <br />
+                <input type="number" v-model="form.age" name="age" placeholder="age" required />
+                <br />
+                <input type="date" v-model="form.birthday" name="birthday" placeholder="birthday" required />
+                <br />
+                <br />
+                <input type="submit" />
+            </form>
+            <h2>{{list.length}}</h2>
+            <form @submit.prevent="search" method="get">
+                <input type="search" name="name" v-model="name" />
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <td>id</td>
+                        <td>name</td>
+                        <td>age</td>
+                        <td>birthday</td>
+                        <td>操作</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item,index) in list" :key="index">
+                        <td>{{item.id}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.age}}</td>
+                        <td>{{item.birthday}}</td>
+                        <td>
+                            <a @click.prevent="setForm(index)" href="/">update</a>
+                            <a @click.prevent="deletes(index)" href="/">delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <script>
+            var vue = new Vue({
+                el: '#app',
+                data: {
+                    name:"",
+                    list: [],
+                    form: {}
+                },
+                mounted() {
+                    this.getList();
+                },
+                methods: {
+                    search(){
+                        var name = this.name;
+                        this.getList(name)
+                    },
+                    getList(name="") {
+                        var vm = this;
+                        $.get("/getList",{name}, function (res) {
+                            if (res.code == "ok") {
+                                vm.list = res.result || [];
+                            } else {
+                                alert(res.msg || '请求失败')
+                            }
+                        });
+                    },
+                    onSubmit() {
+                        var vm = this;
+                        var data = this.form;
+                        if(data.id){
+                            $.get("/update", data, function (res) {
+                                if (res.code == "ok") {
+                                    alert('成功')
+                                    window.location.reload();
+                                } else {
+                                    alert(res.msg || '请求失败')
+                                }
+                            });
+                        }else{
+                            $.get("/add", data, function (res) {
+                                if (res.code == "ok") {
+                                    alert('成功')
+                                    window.location.reload();
+                                } else {
+                                    alert(res.msg || '请求失败')
+                                }
+                            });
+                        }
+                        
+                    },
+                    setForm(index) {
+                        var form = this.list[index];
+                        this.form = form;
+                    },
+                    deletes(index) {
+                        if (confirm('delete?')) {
+                            var id = this.list[index].id;
+                            $.get("/delete", { id }, function (res) {
+                                if (res.code == "ok") {
+                                    alert('成功')
+                                    window.location.reload();
+                                } else {
+                                    alert(res.msg || '请求失败')
+                                }
+                            });
+                        }
+                    },
+                }
+            })
+            // --------------------------------------------------
+        </script>
+    </body>
+
+</html>
