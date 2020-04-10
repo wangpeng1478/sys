@@ -3,6 +3,12 @@ const app = express();
 const Mysql = require("node-mysql-promise");
 //https://www.npmjs.com/package/node-mysql-promise
 
+//https://www.db4free.net/
+// 数据库: wangpeng14789
+// 用户名: wangpeng14789
+// Email: 760635994@qq.com
+// 密码 89272707
+
 // 创建连接
 const mysql = Mysql.createConnection({
     host: 'localhost', // The ip address of cloud database instance, 云数据库实例ip地址
